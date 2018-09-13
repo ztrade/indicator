@@ -40,6 +40,13 @@ func NewMixIndicator(name string, params ...int) (ind MixIndicator, err error) {
 			macd := NewMACD(params[0], params[1], params[2])
 			ind = NewMixed(macd, macd)
 		}
+	case "SMAMACD":
+		if nLen < 3 {
+			err = fmt.Errorf("%s params not enough", name)
+		} else {
+			macd := NewMACDWithSMA(params[0], params[1], params[2])
+			ind = NewMixed(macd, macd)
+		}
 	case "SMA":
 		if nLen >= 2 {
 			maGroup := NewMAGroup(NewSMA(params[0]), NewSMA(params[1]))
@@ -62,6 +69,14 @@ func NewMixIndicator(name string, params ...int) (ind MixIndicator, err error) {
 		} else {
 			stochRSI := NewStochRSI(params[0], params[1], params[2], params[3])
 			ind = NewMixed(stochRSI, stochRSI)
+		}
+	case "RSI":
+		if nLen >= 2 {
+			maGroup := NewMAGroup(NewRSI(params[0]), NewRSI(params[1]))
+			ind = NewMixed(nil, maGroup)
+		} else {
+			rsi := NewRSI(params[0])
+			ind = NewMixed(rsi, nil)
 		}
 	default:
 		err = fmt.Errorf("%s indicator not support", name)

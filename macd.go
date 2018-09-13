@@ -1,12 +1,21 @@
 package indicator
 
 type MACD struct {
-	long   *EMA
-	short  *EMA
-	signal *EMA
+	long   Indicator
+	short  Indicator
+	signal Indicator
 	dif    float64
 	dea    float64
 	result float64
+}
+
+// NewMACDWithSMA  macd signal line with simple ma
+func NewMACDWithSMA(short, long, signal int) *MACD {
+	ma := new(MACD)
+	ma.short = NewEMA(short)
+	ma.long = NewEMA(long)
+	ma.signal = NewSMA(signal)
+	return ma
 }
 
 func NewMACD(short, long, signal int) *MACD {
@@ -24,7 +33,7 @@ func (ma *MACD) Update(price float64) {
 	ma.dif = ma.short.Result() - ma.long.Result()
 	ma.signal.Update(ma.dif)
 	ma.dea = ma.signal.Result()
-	ma.result = 2 * (ma.dif - ma.dea)
+	ma.result = ma.dif - ma.dea
 }
 
 func (ma *MACD) Result() float64 {
