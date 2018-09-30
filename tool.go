@@ -78,6 +78,13 @@ func NewMixIndicator(name string, params ...int) (ind MixIndicator, err error) {
 			rsi := NewRSI(params[0])
 			ind = NewMixed(rsi, nil)
 		}
+	case "BOLL":
+		if nLen >= 2 {
+			boll := NewBoll(params[0], params[1])
+			ind = NewMixed(boll, boll)
+		} else {
+			err = fmt.Errorf("%s params not enough", name)
+		}
 	default:
 		err = fmt.Errorf("%s indicator not support", name)
 	}
