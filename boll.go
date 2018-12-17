@@ -47,12 +47,6 @@ func (b *Boll) Bottom() float64 {
 	return b.bottom
 }
 
-// FastResult just a wap
-func (b *Boll) FastResult() float64 {
-	return b.Top()
-}
-
-// SlowResult just a wap
-func (b *Boll) SlowResult() float64 {
-	return b.Bottom()
+func (b *Boll) Indicator() map[string]float64 {
+	return map[string]float64{"result": b.Result(), "top": b.Top(), "bottom": b.Bottom()}
 }

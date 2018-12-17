@@ -9,12 +9,22 @@ import (
 
 // MixIndicator
 type MixIndicator interface {
-	Updater
-	SlowResult() float64
-	FastResult() float64
-	Result() float64
-	SupportSlowFast() bool
-	SupportResult() bool
+	Indicator
+	Indicator() map[string]float64
+}
+
+type JsonIndicator struct {
+	MixIndicator
+}
+
+func NewJsonIndicator(m MixIndicator) *JsonIndicator {
+	return &JsonIndicator{MixIndicator: m}
+}
+
+func (j *JsonIndicator) MarshalJSON() (buf []byte, err error) {
+	ret := j.Indicator()
+	buf, err = json.Marshal(ret)
+	return
 }
 
 func NewMixIndicator(name string, params ...int) (ind MixIndicator, err error) {
@@ -81,12 +91,15 @@ func NewMixIndicator(name string, params ...int) (ind MixIndicator, err error) {
 	case "BOLL":
 		if nLen >= 2 {
 			boll := NewBoll(params[0], params[1])
-			ind = NewMixed(boll, boll)
+			ind = boll
 		} else {
 			err = fmt.Errorf("%s params not enough", name)
 		}
 	default:
 		err = fmt.Errorf("%s indicator not support", name)
+	}
+	if err == nil {
+		ind = NewJsonIndicator(ind)
 	}
 	return
 }
@@ -175,8 +188,8 @@ func (m *Mixed) SupportSlowFast() bool {
 	return false
 }
 
-func (m *Mixed) MarshalJSON() (buf []byte, err error) {
-	ret := make(map[string]interface{})
+func (m *Mixed) Indicator() map[string]float64 {
+	ret := make(map[string]float64)
 	if m.SupportResult() {
 		ret["result"] = m.Result()
 	}
@@ -184,17 +197,16 @@ func (m *Mixed) MarshalJSON() (buf []byte, err error) {
 		ret["fast"] = m.FastResult()
 		ret["slow"] = m.SlowResult()
 		if m.IsCrossDown() {
-			ret["crossDown"] = true
+			ret["crossDown"] = 1
 		} else {
-			ret["crossDown"] = false
+			ret["crossDown"] = 0
 		}
 
 		if m.IsCrossUp() {
-			ret["crossUp"] = true
+			ret["crossUp"] = 1
 		} else {
-			ret["crossUp"] = false
+			ret["crossUp"] = 0
 		}
 	}
-	buf, err = json.Marshal(ret)
-	return
+	return ret
 }
