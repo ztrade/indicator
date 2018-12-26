@@ -7,17 +7,23 @@ import (
 	"strings"
 )
 
-// MixIndicator
-type MixIndicator interface {
-	Updater
-	SlowResult() float64
-	FastResult() float64
-	Result() float64
-	SupportSlowFast() bool
-	SupportResult() bool
+type NewCommonIndicatorFunc func(params ...int) (CommonIndicator, error)
+
+var (
+	ExtraIndicators = map[string]NewCommonIndicatorFunc{}
+)
+
+// CommonIndicator
+type CommonIndicator interface {
+	Indicator
+	Indicator() map[string]float64
 }
 
-func NewMixIndicator(name string, params ...int) (ind MixIndicator, err error) {
+func RegisterIndicator(name string, fn NewCommonIndicatorFunc) {
+	ExtraIndicators[name] = fn
+}
+
+func NewCommonIndicator(name string, params ...int) (ind CommonIndicator, err error) {
 	name = strings.ToUpper(name)
 	nLen := len(params)
 	if nLen == 0 {
@@ -86,7 +92,12 @@ func NewMixIndicator(name string, params ...int) (ind MixIndicator, err error) {
 			err = fmt.Errorf("%s params not enough", name)
 		}
 	default:
-		err = fmt.Errorf("%s indicator not support", name)
+		fn, ok := ExtraIndicators[name]
+		if !ok {
+			err = fmt.Errorf("%s indicator not support", name)
+		} else {
+			ind, err = fn(params...)
+		}
 	}
 	return
 }
@@ -197,4 +208,8 @@ func (m *Mixed) MarshalJSON() (buf []byte, err error) {
 	}
 	buf, err = json.Marshal(ret)
 	return
+}
+
+func (m *Mixed) Indicator() map[string]float64 {
+	return nil
 }

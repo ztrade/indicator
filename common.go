@@ -14,3 +14,4 @@ type Crosser interface {
 	SlowResult() float64
 	FastResult() float64
 }
+
