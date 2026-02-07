@@ -18,6 +18,7 @@ func (e *EMA) Update(price float64) {
 	if e.bFirst {
 		e.result = price
 		e.bFirst = false
+		return
 	}
 	e.cal(price)
 }

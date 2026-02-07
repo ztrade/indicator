@@ -35,14 +35,15 @@ func (r *RSI) Update(price float64) {
 	r.avgD.Update(r.d)
 	uResult := r.avgU.Result()
 	dResult := r.avgD.Result()
-	r.rs = uResult / dResult
-	r.result = 100 - (100 / (1 + r.rs))
 	if dResult == 0 {
 		if uResult != 0 {
 			r.result = 100
 		} else {
 			r.result = 0
 		}
+	} else {
+		r.rs = uResult / dResult
+		r.result = 100 - (100 / (1 + r.rs))
 	}
 	r.lastClose = &price
 }

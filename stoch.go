@@ -25,10 +25,12 @@ func NewStoch(winLen, periodK, periodD int) *Stoch {
 
 func (s *Stoch) Update(price float64) {
 	if s.bFirst {
+		for i := range s.prices {
+			s.prices[i] = price
+		}
 		s.lowest = price
 		s.highest = price
 		s.bFirst = false
-		return
 	}
 	s.prices[s.age] = price
 	s.age = (s.age + 1) % s.winLen
