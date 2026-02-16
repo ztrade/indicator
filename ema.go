@@ -8,7 +8,7 @@ type EMA struct {
 
 func NewEMA(winLen int) *EMA {
 	e := new(EMA)
-	e.winLen = winLen
+	e.winLen = normalizePeriod(winLen)
 	e.alpha = 2 / float64((e.winLen + 1))
 	e.bFirst = true
 	return e

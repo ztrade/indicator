@@ -9,7 +9,7 @@ type SMA struct {
 
 func NewSMA(winLen int) *SMA {
 	s := new(SMA)
-	s.winLen = winLen
+	s.winLen = normalizePeriod(winLen)
 	s.prices = make([]float64, s.winLen)
 	s.age = 0
 	return s

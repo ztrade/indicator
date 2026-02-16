@@ -11,9 +11,9 @@ type StochRSI struct {
 
 func NewStochRSI(winLen, rsiWinLen, k, d int) *StochRSI {
 	sr := new(StochRSI)
-	sr.winLen = winLen
-	sr.r = NewRSI(winLen)
-	sr.st = NewStoch(rsiWinLen, k, d)
+	sr.winLen = normalizePeriod(winLen)
+	sr.r = NewRSI(normalizePeriod(rsiWinLen))
+	sr.st = NewStoch(sr.winLen, normalizePeriod(k), normalizePeriod(d))
 	return sr
 }
 

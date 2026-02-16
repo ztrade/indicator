@@ -14,8 +14,8 @@ type Boll struct {
 
 func NewBoll(winLen, k int) *Boll {
 	b := new(Boll)
-	b.SMA = NewSMA(winLen)
-	b.k = k
+	b.SMA = NewSMA(normalizePeriod(winLen))
+	b.k = normalizePeriod(k)
 	return b
 }
 

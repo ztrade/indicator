@@ -20,7 +20,16 @@ type CommonIndicator interface {
 }
 
 func RegisterIndicator(name string, fn NewCommonIndicatorFunc) {
-	ExtraIndicators[name] = fn
+	ExtraIndicators[strings.ToUpper(name)] = fn
+}
+
+func validatePositiveParams(name string, params ...int) error {
+	for _, value := range params {
+		if value <= 0 {
+			return fmt.Errorf("%s params must be positive", name)
+		}
+	}
+	return nil
 }
 
 type JsonIndicator struct {
@@ -47,61 +56,117 @@ func NewCommonIndicator(name string, params ...int) (ind CommonIndicator, err er
 	switch name {
 	case "EMA":
 		if nLen >= 2 {
-			maGroup := NewMAGroup(NewEMA(params[0]), NewEMA(params[1]))
-			ind = NewMixed(nil, maGroup)
+			err = validatePositiveParams(name, params[0], params[1])
+			if err == nil {
+				maGroup := NewMAGroup(NewEMA(params[0]), NewEMA(params[1]))
+				ind = NewMixed(nil, maGroup)
+			}
 		} else {
-			ema := NewEMA(params[0])
-			ind = NewMixed(ema, nil)
+			err = validatePositiveParams(name, params[0])
+			if err == nil {
+				ema := NewEMA(params[0])
+				ind = NewMixed(ema, nil)
+			}
 		}
 	case "MACD":
 		if nLen < 3 {
 			err = fmt.Errorf("%s params not enough", name)
 		} else {
-			macd := NewMACD(params[0], params[1], params[2])
-			ind = NewMixed(macd, macd)
+			err = validatePositiveParams(name, params[0], params[1], params[2])
+			if err == nil {
+				macd := NewMACD(params[0], params[1], params[2])
+				ind = NewMixed(macd, macd)
+			}
 		}
 	case "SMAMACD":
 		if nLen < 3 {
 			err = fmt.Errorf("%s params not enough", name)
 		} else {
-			macd := NewMACDWithSMA(params[0], params[1], params[2])
-			ind = NewMixed(macd, macd)
+			err = validatePositiveParams(name, params[0], params[1], params[2])
+			if err == nil {
+				macd := NewMACDWithSMA(params[0], params[1], params[2])
+				ind = NewMixed(macd, macd)
+			}
 		}
 	case "SMA":
 		if nLen >= 2 {
-			maGroup := NewMAGroup(NewSMA(params[0]), NewSMA(params[1]))
-			ind = NewMixed(nil, maGroup)
+			err = validatePositiveParams(name, params[0], params[1])
+			if err == nil {
+				maGroup := NewMAGroup(NewSMA(params[0]), NewSMA(params[1]))
+				ind = NewMixed(nil, maGroup)
+			}
 		} else {
-			sma := NewSMA(params[0])
-			ind = NewMixed(sma, nil)
+			err = validatePositiveParams(name, params[0])
+			if err == nil {
+				sma := NewSMA(params[0])
+				ind = NewMixed(sma, nil)
+			}
 		}
 	case "SMMA":
 		if nLen >= 2 {
-			maGroup := NewMAGroup(NewSMMA(params[0]), NewSMMA(params[1]))
-			ind = NewMixed(nil, maGroup)
+			err = validatePositiveParams(name, params[0], params[1])
+			if err == nil {
+				maGroup := NewMAGroup(NewSMMA(params[0]), NewSMMA(params[1]))
+				ind = NewMixed(nil, maGroup)
+			}
 		} else {
-			smma := NewSMMA(params[0])
-			ind = NewMixed(smma, nil)
+			err = validatePositiveParams(name, params[0])
+			if err == nil {
+				smma := NewSMMA(params[0])
+				ind = NewMixed(smma, nil)
+			}
 		}
 	case "STOCHRSI":
 		if nLen < 4 {
 			err = fmt.Errorf("%s params not enough", name)
 		} else {
-			stochRSI := NewStochRSI(params[0], params[1], params[2], params[3])
-			ind = NewMixed(stochRSI, stochRSI)
+			err = validatePositiveParams(name, params[0], params[1], params[2], params[3])
+			if err == nil {
+				stochRSI := NewStochRSI(params[0], params[1], params[2], params[3])
+				ind = NewMixed(stochRSI, stochRSI)
+			}
 		}
 	case "RSI":
 		if nLen >= 2 {
-			maGroup := NewMAGroup(NewRSI(params[0]), NewRSI(params[1]))
-			ind = NewMixed(nil, maGroup)
+			err = validatePositiveParams(name, params[0], params[1])
+			if err == nil {
+				maGroup := NewMAGroup(NewRSI(params[0]), NewRSI(params[1]))
+				ind = NewMixed(nil, maGroup)
+			}
 		} else {
-			rsi := NewRSI(params[0])
-			ind = NewMixed(rsi, nil)
+			err = validatePositiveParams(name, params[0])
+			if err == nil {
+				rsi := NewRSI(params[0])
+				ind = NewMixed(rsi, nil)
+			}
+		}
+	case "ATR":
+		if nLen < 1 {
+			err = fmt.Errorf("%s params not enough", name)
+		} else {
+			err = validatePositiveParams(name, params[0])
+			if err == nil {
+				atr := NewATR(params[0])
+				ind = NewMixed(atr, nil)
+			}
+		}
+	case "ADX":
+		if nLen < 1 {
+			err = fmt.Errorf("%s params not enough", name)
+		} else {
+			err = validatePositiveParams(name, params[0])
+			if err == nil {
+				adx := NewADX(params[0])
+				ind = NewMixed(adx, adx)
+			}
 		}
 	case "BOLL":
 		if nLen >= 2 {
-			boll := NewBoll(params[0], params[1])
-			ind = boll
+			err = validatePositiveParams(name, params[0], params[1])
+			if err == nil {
+				boll := NewBoll(params[0], params[1])
+				ind = boll
+			}
 		} else {
 			err = fmt.Errorf("%s params not enough", name)
 		}
@@ -224,4 +289,13 @@ func (m *Mixed) Indicator() map[string]float64 {
 		}
 	}
 	return ret
+}
+
+// normalizePeriod makes sure all period-based indicators have a safe minimum
+// window length. This avoids divide-by-zero or zero-sized buffers.
+func normalizePeriod(period int) int {
+	if period <= 0 {
+		return 1
+	}
+	return period
 }

@@ -13,7 +13,7 @@ type RSI struct {
 
 func NewRSI(winLen int) *RSI {
 	r := new(RSI)
-	r.winLen = winLen
+	r.winLen = normalizePeriod(winLen)
 	r.avgU = NewSMMA(r.winLen)
 	r.avgD = NewSMMA(r.winLen)
 	return r

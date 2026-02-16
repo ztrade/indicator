@@ -15,11 +15,11 @@ type Stoch struct {
 
 func NewStoch(winLen, periodK, periodD int) *Stoch {
 	s := new(Stoch)
-	s.winLen = winLen
+	s.winLen = normalizePeriod(winLen)
 	s.prices = make([]float64, s.winLen)
 	s.bFirst = true
-	s.kSMA = NewSMA(periodK)
-	s.dSMA = NewSMA(periodD)
+	s.kSMA = NewSMA(normalizePeriod(periodK))
+	s.dSMA = NewSMA(normalizePeriod(periodD))
 	return s
 }
 

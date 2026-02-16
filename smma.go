@@ -10,7 +10,7 @@ type SMMA struct {
 
 func NewSMMA(winLen int) *SMMA {
 	sm := new(SMMA)
-	sm.winLen = winLen
+	sm.winLen = normalizePeriod(winLen)
 	sm.sma = NewSMA(sm.winLen)
 	sm.bFirst = true
 	return sm
