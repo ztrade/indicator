@@ -19,10 +19,10 @@ func NewATR(winLen int) *ATR {
 }
 
 func (a *ATR) Update(price float64) {
-	a.UpdateOHLC(price, price, price)
+	a.UpdateOHLC(price, price, price, price)
 }
 
-func (a *ATR) UpdateOHLC(high, low, close float64) {
+func (a *ATR) UpdateOHLC(open, high, low, close float64) {
 	tr := math.Abs(high - low)
 	if a.hasLastClose {
 		tr = math.Max(tr, math.Abs(high-a.lastClose))

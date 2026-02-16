@@ -12,59 +12,62 @@ func almostEqual(a, b float64) bool {
 func TestATRUpdateOHLC(t *testing.T) {
 	atr := NewATR(3)
 	bars := []struct {
+		o float64
 		h float64
 		l float64
 		c float64
 	}{
-		{h: 10, l: 9, c: 9.5},
-		{h: 11, l: 9.5, c: 10.5},
-		{h: 12, l: 10, c: 11},
-		{h: 11.5, l: 10.5, c: 11},
+		{o: 29, h: 30, l: 28, c: 29},
+		{o: 29, h: 32, l: 29, c: 31},
+		{o: 31, h: 33, l: 30, c: 32},
+		{o: 32, h: 31, l: 29, c: 30},
+		{o: 11, h: 11.5, l: 10.5, c: 11},
 	}
 
-	atr.UpdateOHLC(bars[0].h, bars[0].l, bars[0].c)
+	atr.UpdateOHLC(bars[0].o, bars[0].h, bars[0].l, bars[0].c)
 	if !almostEqual(atr.Result(), 0) {
 		t.Fatalf("unexpected initial atr value, got %.12f", atr.Result())
 	}
 
-	atr.UpdateOHLC(bars[1].h, bars[1].l, bars[1].c)
+	atr.UpdateOHLC(bars[1].o, bars[1].h, bars[1].l, bars[1].c)
 	if !almostEqual(atr.Result(), 0) {
 		t.Fatalf("unexpected atr value before warm-up, got %.12f", atr.Result())
 	}
 
-	atr.UpdateOHLC(bars[2].h, bars[2].l, bars[2].c)
-	if !almostEqual(atr.Result(), 1.5) {
-		t.Fatalf("unexpected atr after warm-up, got %.12f, want 1.5", atr.Result())
+	atr.UpdateOHLC(bars[2].o, bars[2].h, bars[2].l, bars[2].c)
+	if !almostEqual(atr.Result(), 2.666666666667) {
+		t.Fatalf("unexpected atr after warm-up, got %.12f, want 2.666666666667", atr.Result())
 	}
 
-	atr.UpdateOHLC(bars[3].h, bars[3].l, bars[3].c)
-	if !almostEqual(atr.Result(), 1.3333333333333333) {
-		t.Fatalf("unexpected atr smoothed value, got %.12f", atr.Result())
+	atr.UpdateOHLC(bars[3].o, bars[3].h, bars[3].l, bars[3].c)
+	if !almostEqual(atr.Result(), 2.777777777778) {
+		t.Fatalf("unexpected atr smoothed value, got %.12f, want 2.777777777778", atr.Result())
 	}
-	if !almostEqual(atr.TR(), 1) {
-		t.Fatalf("unexpected last true range, got %.12f", atr.TR())
+	if !almostEqual(atr.TR(), 3) {
+		t.Fatalf("unexpected last true range, got %.12f, want 3", atr.TR())
 	}
 }
 
 func TestADXUpdateOHLC(t *testing.T) {
 	adx := NewADX(3)
 	bars := []struct {
+		o float64
 		h float64
 		l float64
 		c float64
 	}{
-		{h: 30, l: 28, c: 29},
-		{h: 32, l: 29, c: 31},
-		{h: 33, l: 30, c: 32},
-		{h: 31, l: 29, c: 30},
-		{h: 30, l: 27, c: 28},
-		{h: 29, l: 26, c: 27},
-		{h: 31, l: 27, c: 30},
-		{h: 32, l: 28, c: 31},
+		{o: 29, h: 30, l: 28, c: 29},
+		{o: 29, h: 32, l: 29, c: 31},
+		{o: 31, h: 33, l: 30, c: 32},
+		{o: 32, h: 31, l: 29, c: 30},
+		{o: 30, h: 30, l: 27, c: 28},
+		{o: 28, h: 29, l: 26, c: 27},
+		{o: 27, h: 31, l: 27, c: 30},
+		{o: 30, h: 32, l: 28, c: 31},
 	}
 
 	for idx, bar := range bars {
-		adx.UpdateOHLC(bar.h, bar.l, bar.c)
+		adx.UpdateOHLC(bar.o, bar.h, bar.l, bar.c)
 		if idx == 4 && !almostEqual(adx.Result(), 0) {
 			t.Fatalf("adx should still be warming up, got %.12f", adx.Result())
 		}

@@ -15,3 +15,10 @@ type Crosser interface {
 	FastResult() float64
 }
 
+type OHLCUpdater interface {
+	UpdateOHLC(open, high, low, close float64)
+}
+type OHLCIndicator interface {
+	OHLCUpdater
+	Result() float64
+}

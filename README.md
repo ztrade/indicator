@@ -12,29 +12,35 @@ The trade indicator.
 | ATR | Yes |
 | ADX | Yes |
 
-# ATR / ADX Usage
-`ATR` and `ADX` are OHLC-based indicators. For accurate results, use `UpdateOHLC(high, low, close)`.
+
+# Quick Start: OHLC Indicators
+
+You can quickly create OHLC-based indicators (such as ATR, ADX) using `NewOHCLIndicator`:
 
 ```go
-atr := indicator.NewATR(14)
-adx := indicator.NewADX(14)
-
-for _, candle := range candles {
-	atr.UpdateOHLC(candle.High, candle.Low, candle.Close)
-	adx.UpdateOHLC(candle.High, candle.Low, candle.Close)
+atr, err := indicator.NewOHCLIndicator("ATR", 14)
+adx, err := indicator.NewOHCLIndicator("ADX", 14)
+if err != nil {
+    panic(err)
 }
-
+for _, candle := range candles {
+    atr.UpdateOHLC(candle.Open, candle.High, candle.Low, candle.Close)
+    adx.UpdateOHLC(candle.Open, candle.High, candle.Low, candle.Close)
+}
 fmt.Println("ATR:", atr.Result())
 fmt.Println("ADX:", adx.Result())
 fmt.Println("+DI:", adx.PlusDI(), "-DI:", adx.MinusDI())
 ```
 
-`wilderAverage` is the internal smoothing engine used by ATR/ADX:
-- warm-up phase: use SMA to initialize the first smoothed value
-- running phase: `next = (prev*(period-1) + current) / period`
+Currently supported: ATR, ADX. More OHLC indicators can be added easily.
 
-Because of warm-up, ATR/ADX may return 0 in early samples before enough data arrives.
-Both indicators also keep compatibility with the common `Update(price)` interface (close-only fallback).
+**Note:**
+- For accurate results, always use `UpdateOHLC(open, high, low, close)`.
+- `wilderAverage` is the internal smoothing engine for ATR/ADX:
+    - Warm-up: uses SMA to initialize the first smoothed value
+    - Running: `next = (prev*(period-1) + current) / period`
+- During warm-up, ATR/ADX may return 0 until enough data arrives.
+- Both indicators also support the simple `Update(price)` interface (close-only fallback).
 
 # Cheers to
 Some indicator refer to [Gekko](https://github.com/thrasher-/gocryptotrader)

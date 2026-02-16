@@ -35,10 +35,10 @@ func NewADX(winLen int) *ADX {
 }
 
 func (a *ADX) Update(price float64) {
-	a.UpdateOHLC(price, price, price)
+	a.UpdateOHLC(price, price, price, price)
 }
 
-func (a *ADX) UpdateOHLC(high, low, close float64) {
+func (a *ADX) UpdateOHLC(open, high, low, close float64) {
 	if !a.hasLast {
 		a.lastHigh = high
 		a.lastLow = low

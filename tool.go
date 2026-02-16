@@ -299,3 +299,36 @@ func normalizePeriod(period int) int {
 	}
 	return period
 }
+
+// NewOHCLIndicator 创建支持 OHLCUpdater 的指标实例
+func NewOHCLIndicator(name string, params ...int) (ind OHLCIndicator, err error) {
+	name = strings.ToUpper(name)
+	nLen := len(params)
+	if nLen == 0 {
+		err = fmt.Errorf("%s params can't be empty", name)
+		return
+	}
+	switch name {
+	case "ATR":
+		if nLen < 1 {
+			err = fmt.Errorf("%s params not enough", name)
+		} else {
+			err = validatePositiveParams(name, params[0])
+			if err == nil {
+				ind = NewATR(params[0])
+			}
+		}
+	case "ADX":
+		if nLen < 1 {
+			err = fmt.Errorf("%s params not enough", name)
+		} else {
+			err = validatePositiveParams(name, params[0])
+			if err == nil {
+				ind = NewADX(params[0])
+			}
+		}
+	default:
+		err = fmt.Errorf("%s OHLC indicator not support", name)
+	}
+	return
+}
