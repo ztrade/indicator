@@ -147,7 +147,7 @@ func NewCommonIndicator(name string, params ...int) (ind CommonIndicator, err er
 			err = validatePositiveParams(name, params[0])
 			if err == nil {
 				atr := NewATR(params[0])
-				ind = NewMixed(atr, nil)
+				ind = NewMixed(atr, nil).SetOHLC(true)
 			}
 		}
 	case "ADX":
@@ -157,7 +157,7 @@ func NewCommonIndicator(name string, params ...int) (ind CommonIndicator, err er
 			err = validatePositiveParams(name, params[0])
 			if err == nil {
 				adx := NewADX(params[0])
-				ind = NewMixed(adx, adx)
+				ind = NewMixed(adx, nil).SetOHLC(true)
 			}
 		}
 	case "BOLL":
@@ -189,6 +189,7 @@ type Mixed struct {
 	crossIndicator Crosser
 	isSameOne      bool
 	crossTool      *CrossTool
+	ohlc           bool
 }
 
 func NewMixed(indicator Indicator, crossIndicator Crosser) *Mixed {
@@ -201,6 +202,10 @@ func NewMixed(indicator Indicator, crossIndicator Crosser) *Mixed {
 	m.checkSameOne()
 	return m
 }
+func (m *Mixed) SetOHLC(isOHLC bool) *Mixed {
+	m.ohlc = isOHLC
+	return m
+}
 
 func (m *Mixed) checkSameOne() {
 	if reflect.ValueOf(m.indicator) == reflect.ValueOf(m.crossIndicator) {
@@ -211,6 +216,19 @@ func (m *Mixed) checkSameOne() {
 }
 
 func (m *Mixed) Update(values ...float64) error {
+	if m.ohlc {
+		o, h, l, c, err := getOHLC(values)
+		if err != nil {
+			return err
+		}
+		if m.crossTool != nil {
+			m.crossTool.Update(o, h, l, c)
+		}
+		if !m.isSameOne && m.indicator != nil {
+			m.indicator.Update(o, h, l, c)
+		}
+		return nil
+	}
 	price, _, err := getPrice(values)
 	if err != nil {
 		return err
