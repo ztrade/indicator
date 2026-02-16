@@ -18,8 +18,9 @@ func NewATR(winLen int) *ATR {
 	return &ATR{winLen: winLen, trMA: newWilderAverage(winLen)}
 }
 
-func (a *ATR) Update(price float64) {
-	a.UpdateOHLC(price, price, price, price)
+func (a *ATR) Update(values ...float64) {
+	o, h, l, c := getOHLC(values)
+	a.UpdateOHLC(o, h, l, c)
 }
 
 func (a *ATR) UpdateOHLC(open, high, low, close float64) {

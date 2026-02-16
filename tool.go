@@ -210,7 +210,8 @@ func (m *Mixed) checkSameOne() {
 	}
 }
 
-func (m *Mixed) Update(price float64) {
+func (m *Mixed) Update(values ...float64) {
+	price, _ := getPrice(values)
 	if m.crossTool != nil {
 		m.crossTool.Update(price)
 	}
@@ -298,37 +299,4 @@ func normalizePeriod(period int) int {
 		return 1
 	}
 	return period
-}
-
-// NewOHLCIndicator 创建支持 OHLCUpdater 的指标实例
-func NewOHLCIndicator(name string, params ...int) (ind OHLCIndicator, err error) {
-	name = strings.ToUpper(name)
-	nLen := len(params)
-	if nLen == 0 {
-		err = fmt.Errorf("%s params can't be empty", name)
-		return
-	}
-	switch name {
-	case "ATR":
-		if nLen < 1 {
-			err = fmt.Errorf("%s params not enough", name)
-		} else {
-			err = validatePositiveParams(name, params[0])
-			if err == nil {
-				ind = NewATR(params[0])
-			}
-		}
-	case "ADX":
-		if nLen < 1 {
-			err = fmt.Errorf("%s params not enough", name)
-		} else {
-			err = validatePositiveParams(name, params[0])
-			if err == nil {
-				ind = NewADX(params[0])
-			}
-		}
-	default:
-		err = fmt.Errorf("%s OHLC indicator not support", name)
-	}
-	return
 }

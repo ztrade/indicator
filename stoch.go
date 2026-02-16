@@ -23,7 +23,9 @@ func NewStoch(winLen, periodK, periodD int) *Stoch {
 	return s
 }
 
-func (s *Stoch) Update(price float64) {
+func (s *Stoch) Update(values ...float64) {
+	price, _ := getPrice(values)
+
 	if s.bFirst {
 		for i := range s.prices {
 			s.prices[i] = price

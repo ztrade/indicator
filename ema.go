@@ -14,7 +14,8 @@ func NewEMA(winLen int) *EMA {
 	return e
 }
 
-func (e *EMA) Update(price float64) {
+func (e *EMA) Update(values ...float64) {
+	price, _ := getPrice(values)
 	if e.bFirst {
 		e.result = price
 		e.bFirst = false

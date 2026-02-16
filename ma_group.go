@@ -12,7 +12,8 @@ func NewMAGroup(fast, slow Indicator) *MAGroup {
 	return mg
 }
 
-func (mg *MAGroup) Update(price float64) {
+func (mg *MAGroup) Update(values ...float64) {
+	price, _ := getPrice(values)
 	mg.fast.Update(price)
 	mg.slow.Update(price)
 }

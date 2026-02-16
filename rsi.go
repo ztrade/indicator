@@ -19,7 +19,8 @@ func NewRSI(winLen int) *RSI {
 	return r
 }
 
-func (r *RSI) Update(price float64) {
+func (r *RSI) Update(values ...float64) {
+	price, _ := getPrice(values)
 	if r.lastClose == nil {
 		r.lastClose = &price
 		return

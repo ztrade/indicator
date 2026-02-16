@@ -12,7 +12,8 @@ func NewCrossTool(crosser Crosser) *CrossTool {
 	return ct
 }
 
-func (ct *CrossTool) Update(price float64) {
+func (ct *CrossTool) Update(values ...float64) {
+	price, _ := getPrice(values)
 	ct.fasts[2] = ct.fasts[1]
 	ct.fasts[1] = ct.fasts[0]
 	ct.slows[2] = ct.slows[1]

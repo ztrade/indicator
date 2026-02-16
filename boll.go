@@ -23,7 +23,8 @@ func (b *Boll) Result() float64 {
 	return b.mid
 }
 
-func (b *Boll) Update(price float64) {
+func (b *Boll) Update(values ...float64) {
+	price, _ := getPrice(values)
 	b.SMA.Update(price)
 	b.Cal()
 }

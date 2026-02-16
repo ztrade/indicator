@@ -17,7 +17,8 @@ func NewStochRSI(winLen, rsiWinLen, k, d int) *StochRSI {
 	return sr
 }
 
-func (sr *StochRSI) Update(price float64) {
+func (sr *StochRSI) Update(values ...float64) {
+	price, _ := getPrice(values)
 	sr.r.Update(price)
 	sr.st.Update(sr.r.Result())
 }

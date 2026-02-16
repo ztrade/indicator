@@ -16,7 +16,8 @@ func NewSMMA(winLen int) *SMMA {
 	return sm
 }
 
-func (sm *SMMA) Update(price float64) {
+func (sm *SMMA) Update(values ...float64) {
+	price, _ := getPrice(values)
 	if sm.bFirst {
 		nLen := sm.age + 1
 		if nLen < sm.winLen {

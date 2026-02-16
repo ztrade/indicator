@@ -26,7 +26,8 @@ func NewMACD(short, long, signal int) *MACD {
 	return ma
 }
 
-func (ma *MACD) Update(price float64) {
+func (ma *MACD) Update(values ...float64) {
+	price, _ := getPrice(values)
 	ma.long.Update(price)
 	ma.short.Update(price)
 

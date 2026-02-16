@@ -15,7 +15,8 @@ func NewSMA(winLen int) *SMA {
 	return s
 }
 
-func (s *SMA) Update(price float64) {
+func (s *SMA) Update(values ...float64) {
+	price, _ := getPrice(values)
 	s.result = price
 	tail := s.prices[s.age]
 	s.prices[s.age] = price
