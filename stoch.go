@@ -23,8 +23,11 @@ func NewStoch(winLen, periodK, periodD int) *Stoch {
 	return s
 }
 
-func (s *Stoch) Update(values ...float64) {
-	price, _ := getPrice(values)
+func (s *Stoch) Update(values ...float64) error {
+	price, _, err := getPrice(values)
+	if err != nil {
+		return err
+	}
 
 	if s.bFirst {
 		for i := range s.prices {
@@ -39,11 +42,12 @@ func (s *Stoch) Update(values ...float64) {
 	s.highest = highest(s.prices)
 	s.lowest = lowest(s.prices)
 	if s.highest == s.lowest {
-		return
+		return nil
 	}
 	s.result = (100 * (price - s.lowest)) / (s.highest - s.lowest)
 	s.kSMA.Update(s.result)
 	s.dSMA.Update(s.kSMA.Result())
+	return nil
 }
 
 func (s *Stoch) Result() float64 {

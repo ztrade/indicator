@@ -15,12 +15,16 @@ func NewSMA(winLen int) *SMA {
 	return s
 }
 
-func (s *SMA) Update(values ...float64) {
-	price, _ := getPrice(values)
+func (s *SMA) Update(values ...float64) error {
+	price, _, err := getPrice(values)
+	if err != nil {
+		return err
+	}
 	s.result = price
 	tail := s.prices[s.age]
 	s.prices[s.age] = price
 	s.sum += price - tail
 	s.result = s.sum / float64(s.winLen)
 	s.age = (s.age + 1) % s.winLen
+	return nil
 }

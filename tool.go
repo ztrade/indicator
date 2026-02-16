@@ -210,14 +210,18 @@ func (m *Mixed) checkSameOne() {
 	}
 }
 
-func (m *Mixed) Update(values ...float64) {
-	price, _ := getPrice(values)
+func (m *Mixed) Update(values ...float64) error {
+	price, _, err := getPrice(values)
+	if err != nil {
+		return err
+	}
 	if m.crossTool != nil {
 		m.crossTool.Update(price)
 	}
 	if !m.isSameOne && m.indicator != nil {
 		m.indicator.Update(price)
 	}
+	return nil
 }
 
 func (m *Mixed) FastResult() float64 {

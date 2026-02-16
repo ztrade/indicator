@@ -19,11 +19,14 @@ func NewRSI(winLen int) *RSI {
 	return r
 }
 
-func (r *RSI) Update(values ...float64) {
-	price, _ := getPrice(values)
+func (r *RSI) Update(values ...float64) error {
+	price, _, err := getPrice(values)
+	if err != nil {
+		return err
+	}
 	if r.lastClose == nil {
 		r.lastClose = &price
-		return
+		return nil
 	}
 	if price > *r.lastClose {
 		r.u = price - *r.lastClose
@@ -47,6 +50,7 @@ func (r *RSI) Update(values ...float64) {
 		r.result = 100 - (100 / (1 + r.rs))
 	}
 	r.lastClose = &price
+	return nil
 }
 
 func (r *RSI) Result() float64 {

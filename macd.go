@@ -26,8 +26,11 @@ func NewMACD(short, long, signal int) *MACD {
 	return ma
 }
 
-func (ma *MACD) Update(values ...float64) {
-	price, _ := getPrice(values)
+func (ma *MACD) Update(values ...float64) error {
+	price, _, err := getPrice(values)
+	if err != nil {
+		return err
+	}
 	ma.long.Update(price)
 	ma.short.Update(price)
 
@@ -35,6 +38,7 @@ func (ma *MACD) Update(values ...float64) {
 	ma.signal.Update(ma.dif)
 	ma.dea = ma.signal.Result()
 	ma.result = ma.dif - ma.dea
+	return nil
 }
 
 func (ma *MACD) Result() float64 {

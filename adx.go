@@ -34,9 +34,13 @@ func NewADX(winLen int) *ADX {
 	}
 }
 
-func (a *ADX) Update(values ...float64) {
-	o, h, l, c := getOHLC(values)
+func (a *ADX) Update(values ...float64) error {
+	o, h, l, c, err := getOHLC(values)
+	if err != nil {
+		return err
+	}
 	a.UpdateOHLC(o, h, l, c)
+	return nil
 }
 
 func (a *ADX) UpdateOHLC(open, high, low, close float64) {

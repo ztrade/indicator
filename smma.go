@@ -16,8 +16,11 @@ func NewSMMA(winLen int) *SMMA {
 	return sm
 }
 
-func (sm *SMMA) Update(values ...float64) {
-	price, _ := getPrice(values)
+func (sm *SMMA) Update(values ...float64) error {
+	price, _, err := getPrice(values)
+	if err != nil {
+		return err
+	}
 	if sm.bFirst {
 		nLen := sm.age + 1
 		if nLen < sm.winLen {
@@ -31,4 +34,5 @@ func (sm *SMMA) Update(values ...float64) {
 	} else {
 		sm.result = (sm.result*float64(sm.winLen-1) + price) / float64(sm.winLen)
 	}
+	return nil
 }

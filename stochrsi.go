@@ -17,10 +17,14 @@ func NewStochRSI(winLen, rsiWinLen, k, d int) *StochRSI {
 	return sr
 }
 
-func (sr *StochRSI) Update(values ...float64) {
-	price, _ := getPrice(values)
+func (sr *StochRSI) Update(values ...float64) error {
+	price, _, err := getPrice(values)
+	if err != nil {
+		return err
+	}
 	sr.r.Update(price)
 	sr.st.Update(sr.r.Result())
+	return nil
 }
 
 func (sr *StochRSI) KResult() float64 {

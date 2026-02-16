@@ -23,10 +23,14 @@ func (b *Boll) Result() float64 {
 	return b.mid
 }
 
-func (b *Boll) Update(values ...float64) {
-	price, _ := getPrice(values)
+func (b *Boll) Update(values ...float64) error {
+	price, _, err := getPrice(values)
+	if err != nil {
+		return err
+	}
 	b.SMA.Update(price)
 	b.Cal()
+	return nil
 }
 
 func (b *Boll) Cal() {

@@ -12,8 +12,11 @@ func NewCrossTool(crosser Crosser) *CrossTool {
 	return ct
 }
 
-func (ct *CrossTool) Update(values ...float64) {
-	price, _ := getPrice(values)
+func (ct *CrossTool) Update(values ...float64) error {
+	price, _, err := getPrice(values)
+	if err != nil {
+		return err
+	}
 	ct.fasts[2] = ct.fasts[1]
 	ct.fasts[1] = ct.fasts[0]
 	ct.slows[2] = ct.slows[1]
@@ -23,6 +26,7 @@ func (ct *CrossTool) Update(values ...float64) {
 
 	ct.fasts[0] = ct.crosser.FastResult()
 	ct.slows[0] = ct.crosser.SlowResult()
+	return nil
 }
 
 func (ct *CrossTool) IsCrossUp() bool {

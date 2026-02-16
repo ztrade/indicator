@@ -14,14 +14,18 @@ func NewEMA(winLen int) *EMA {
 	return e
 }
 
-func (e *EMA) Update(values ...float64) {
-	price, _ := getPrice(values)
+func (e *EMA) Update(values ...float64) error {
+	price, _, err := getPrice(values)
+	if err != nil {
+		return err
+	}
 	if e.bFirst {
 		e.result = price
 		e.bFirst = false
-		return
+		return nil
 	}
 	e.cal(price)
+	return nil
 }
 
 // cal

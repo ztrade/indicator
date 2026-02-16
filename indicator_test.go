@@ -13,8 +13,12 @@ func floatEquals(a, b float64) bool {
 func TestStochUsesFirstSampleInWindow(t *testing.T) {
 	s := NewStoch(14, 3, 3)
 
-	s.Update(100)
-	s.Update(90)
+	if err := s.Update(100); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if err := s.Update(90); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
 
 	if !floatEquals(s.Result(), 0) {
 		t.Fatalf("unexpected stoch result, got %.6f, want 0", s.Result())
