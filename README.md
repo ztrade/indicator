@@ -15,11 +15,11 @@ The trade indicator.
 
 # Quick Start: OHLC Indicators
 
-You can quickly create OHLC-based indicators (such as ATR, ADX) using `NewOHCLIndicator`:
+You can quickly create OHLC-based indicators (such as ATR, ADX) using `NewOHLCIndicator`:
 
 ```go
-atr, err := indicator.NewOHCLIndicator("ATR", 14)
-adx, err := indicator.NewOHCLIndicator("ADX", 14)
+atr, err := indicator.NewOHLCIndicator("ATR", 14)
+adx, err := indicator.NewOHLCIndicator("ADX", 14)
 if err != nil {
     panic(err)
 }

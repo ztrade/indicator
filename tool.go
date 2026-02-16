@@ -300,8 +300,8 @@ func normalizePeriod(period int) int {
 	return period
 }
 
-// NewOHCLIndicator 创建支持 OHLCUpdater 的指标实例
-func NewOHCLIndicator(name string, params ...int) (ind OHLCIndicator, err error) {
+// NewOHLCIndicator 创建支持 OHLCUpdater 的指标实例
+func NewOHLCIndicator(name string, params ...int) (ind OHLCIndicator, err error) {
 	name = strings.ToUpper(name)
 	nLen := len(params)
 	if nLen == 0 {
